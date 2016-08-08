@@ -7,12 +7,23 @@ var swig = require('swig');
 var models = require('./models');
 var path = require('path');
 var fs = require('fs');
+var routes = require('./routes');
+
 
 var app = express();
 
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({extended:true}));
-app.use(bodyParser.json);
+app.use(bodyParser.json());
+app.use('/wiki', routes);
+
+// app.get('/test', function(req, res, next){
+// 	console.log('test');
+// 	res.send('test');
+// });
+
+console.log(routes);
+
 app.use(express.static(path.join(__dirname + '/public')));
 
 // templating boilerplate setup

@@ -1,7 +1,7 @@
 var Sequelize = require('sequelize');
 var db = new Sequelize('postgres://localhost:5432/wikistack');
 
-var Page = db.define ('page', {
+var Page = db.define('page', {
   id: {
     type: Sequelize.INTEGER,
     primaryKey: true,
@@ -13,7 +13,7 @@ var Page = db.define ('page', {
   },
   urlTitle: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: false,
   },
   content: {
     type: Sequelize.TEXT,
@@ -25,6 +25,12 @@ var Page = db.define ('page', {
   data: {
     type: Sequelize.DATE,
     defaultValue: Sequelize.NOW
+  }
+}, {
+  getterMethods: {
+    route: function() {
+      return '/wiki/' + this.urlTitle
+    }
   }
 });
 
