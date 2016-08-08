@@ -38,7 +38,7 @@ swig.setDefaults({ cache: false });
 
 models.User.sync({})
 .then(function () {
-   return models.Page.sync({});
+   return models.Page.sync({force:false});
 })
 .then(function () {
    app.listen(3001, function () {
