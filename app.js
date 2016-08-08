@@ -35,12 +35,10 @@ swig.setDefaults({ cache: false });
 
 
 //connecting to database and start server on port 3001
+
 models.User.sync({})
 .then(function () {
    return models.Page.sync({});
-})
-.then(function(){
-  return models.User.sync({});
 })
 .then(function () {
    app.listen(3001, function () {

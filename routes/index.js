@@ -3,6 +3,9 @@ var express = require('express');
 var router = express.Router();
 var models = require('../models');
 
+//definition of the database modules
+var Page = models.Page;
+var User = models.User;
 
 router.get('/', retrieveAllWiki);
 router.get('/add', showAddForm);
@@ -17,10 +20,51 @@ function showAddForm(req, res, next) {
 }
 
 function submitNewWiki(req, res, next) {
-  res.send('got to POST /wiki/');
+
+//{"author":"Adam","email":"adam@firstchild.com","title":"1","content":"Don't eat the apple!","status":"open"}
+
+var page = Page.build({
+    title: req.body.title,
+    content: req.body.content,
+    author: req.body.author,
+    email: req.body.email,
+    status: req.body.status
+
+});
+
+    page.save(function(){
+      res.redirect('/');
+    });
+
 }
 
 
+//restful routing
+router.get('/users', getAllUsers);
+router.get('/users/:userId', getUserById);
+router.post('/users', createUser);
+router.put('/users/:userId', updateUserById);
+router.delete('/users/:userId', deleteUserById);
+
+function getAllUsers(req, res, next){
+
+}
+
+function getUserById(req, res, next){
+
+}
+
+function createUser(req, res, next){
+
+}
+
+function updateUserById(req, res, next){
+
+}
+
+function deleteUserById(req, res, next){
+
+}
 
   // here we basically treet the root view and tweets view as identical
   // router.get('/', respondWithAllTweets);
