@@ -3,6 +3,7 @@ var express = require('express');
 var router = express.Router();
 var usersRouter = express.Router();
 var models = require('../models');
+var Promise = require('bluebird');
 
 //definition of the database modules
 var Page = models.Page;
@@ -22,8 +23,10 @@ router.get('/:urlTitle', retrieveWikiByUrl);
 
 function retrieveAllWiki(req, res, next) {
   Page.findAll({})
-    .then(function(entries){
-      res.render('index', {entries: entries});
+    .then(function(entries) {
+      res.render('index', {
+        entries: entries
+      });
       // res.json(entries);
     });
 }
@@ -50,18 +53,18 @@ function submitNewWiki(req, res, next) {
       email: req.body.email
     }
   })
-  .then(function(userData) {
-    var user = userData[0];
+    .then(function(userData) {
+      var user = userData[0];
 
-    return page
-      .save()
-      .then(function(data) {
-        return page.setAuthor(user);
-      });
-  })
-  .then(function(pageData){
-    res.redirect(pageData.route);
-  });
+      return page
+        .save()
+        .then(function(data) {
+          return page.setAuthor(user);
+        });
+    })
+    .then(function(pageData) {
+      res.redirect(pageData.route);
+    });
 
 
 
@@ -88,35 +91,39 @@ function retrieveWikiByUrl(req, res, next) {
 
 
 
-
 function getAllUsers(req, res, next) {
   User.findAll()
     .then(function(authors) {
-      res.render('authorIndex', {authors: authors});
+      res.render('authorIndex', {
+        authors: authors
+      });
     })
-    .catch(function(error){
+    .catch(function(error) {
       console.log(error);
     });
 
 }
 
 function getUserById(req, res, next) {
-  User.findOne({
+  var userPromise = User.findOne({
     where: {
       id: req.params.userId
     }
   })
-  .then(function(userData){
-    return Page.findAll({
-      where: {
-        authorId: userData.id
-      }
+  var pagePromise = Page.findAll({
+    where: {
+      authorId: req.params.userId
+    }
+  });
+
+  var userPage = Promise.all([userPromise, pagePromise]);
+
+  userPage.then(function(promises){
+    res.render('userpage', {
+      user: promises[0],
+      entries: promises[1]
     });
-  })
-  .then(function(userData){
-    // res.json(userData);
-    res.render('userpage', {entries: userData});
-  })
+  });
 }
 
 function createUser(req, res, next) {
