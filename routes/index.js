@@ -107,7 +107,15 @@ function getUserById(req, res, next) {
     }
   })
   .then(function(userData){
-    res.json(userData);
+    return Page.findAll({
+      where: {
+        authorId: userData.id
+      }
+    });
+  })
+  .then(function(userData){
+    // res.json(userData);
+    res.render('userpage', {entries: userData});
   })
 }
 
