@@ -13,13 +13,17 @@ router.post('/', submitNewWiki);
 router.get('/:urlTitle', retrieveWikiByUrl);
 
 function retrieveAllWiki(req, res, next) {
-  res.send('got to GET /wiki/');
+  Page.findAll({})
+    .then(function(entries){
+      res.render('index', {entries: entries});
+      // res.json(entries);
+    });
 }
 
 function showAddForm(req, res, next) {
   res.render('addpage', {
     title: 'Send a new Wiki'
-  })
+  });
 }
 
 function submitNewWiki(req, res, next) {
