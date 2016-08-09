@@ -78,13 +78,22 @@ function retrieveWikiByUrl(req, res, next) {
   Page.findOne({
     where: {
       urlTitle: req.params.urlTitle
-    }
+    },
+    include: [{
+      model: User,
+      as: 'author'
+    }]
   })
-    .then(function(foundPage) {
-      res.render('wikipage', {
-        title: foundPage.title,
-        content: foundPage.content
-      });
+    .then(function(page) {
+      // page instance will have a .author property
+      // as a filled in user object ({ name, email })
+      if (page === null) {
+        res.status(404).send();
+      } else {
+        res.render('wikipage', {
+          page: page
+        });
+      }
     })
     .catch(next);
 }
@@ -118,12 +127,14 @@ function getUserById(req, res, next) {
 
   var userPage = Promise.all([userPromise, pagePromise]);
 
-  userPage.then(function(promises){
-    res.render('userpage', {
-      user: promises[0],
-      entries: promises[1]
-    });
-  });
+  userPage
+    .then(function(promises) {
+      res.render('userpage', {
+        user: promises[0],
+        entries: promises[1]
+      });
+    })
+    .catch(next);
 }
 
 function createUser(req, res, next) {
