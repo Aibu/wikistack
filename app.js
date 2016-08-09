@@ -15,7 +15,8 @@ var app = express();
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
-app.use('/wiki', routes);
+app.use('/wiki', routes.router);
+app.use('/users', routes.usersRouter);
 
 // app.get('/test', function(req, res, next){
 // 	console.log('test');
